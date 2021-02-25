@@ -1,0 +1,11 @@
+.wrapper {
+    max-width: 640px;
+    margin: auto;
+}
+
+.heading {
+    text-align: center;
+    font-weight: 300;
+    font-size: 3rem;
+    margin-bottom: 30px;
+}
