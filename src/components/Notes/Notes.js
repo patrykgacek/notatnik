@@ -23,7 +23,7 @@ const Notes = () => {
     }
 
     const editNote = async newNote => {
-        await axios.put(apiPath + newNote.id, {title:newNote.title, body:newNote.body})
+        await axios.put(apiPath + "/" + newNote.id, {title:newNote.title, body:newNote.body})
 
         const index = notes.findIndex(note => note.id === newNote.id)
         if (index >= 0) {
