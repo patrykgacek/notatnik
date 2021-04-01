@@ -1,32 +1,48 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Note from "./Note/Note"
 import styles from './Notes.module.css'
-import devNotes from '../../devData/devNotes'
+//import devNotes from '../../devData/devNotes'
 import NewNote from '../NewNote/NewNote'
+import axios from '../../axios'
 
-const makeid = (length) => {
-    let result           = '';
-    let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let charactersLength = characters.length;
-    for ( let i = 0; i < length; i++ ) {
-       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
- }
+const apiPath = 'notes'
 
 const Notes = () => {
-    const [notes, setNotes] = useState(devNotes)
+    const [notes, setNotes] = useState([])
 
-    const deleteNote = id => setNotes(notes.filter(note => note.id !== id))
-    const addNote = newNote => setNotes([{id:makeid(10), ...newNote}, ...notes])
-    const editNote = newNote => {
+    const deleteNote = async id => {
+        await axios.delete(apiPath + "/" + id)
+        setNotes(notes.filter(note => note.id !== id))
+    }
+    
+    const addNote = async newNote => {
+        const res = await axios.post(apiPath, newNote)
+        newNote = res.data;
+        console.log(newNote);
+        setNotes([newNote, ...notes])
+    }
+
+    const editNote = async newNote => {
+        await axios.put(apiPath + newNote.id, {title:newNote.title, body:newNote.body})
+
         const index = notes.findIndex(note => note.id === newNote.id)
         if (index >= 0) {
             const newNotes = [...notes]
             newNotes[index] = newNote
             setNotes(newNotes)
         }
+
+        console.log("Funkcjonalnosc wylaczona")
     }
+    const fetchNotes = async () => {
+        const res = await axios.get(apiPath)
+        setNotes(res.data.Items)
+        console.log(res.data.Items);
+    }
+
+    useEffect(() => {
+        fetchNotes()    
+    }, []);
 
     return (
         <div className={styles.wrapper}>
